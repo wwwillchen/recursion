@@ -2,44 +2,38 @@
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
-var stringifyJSON = function(input, arr) {
-	console.log("first input:");
-	console.log(input);
-	var stringInput, arrayInput;
-	if (Array.isArray(input)==false) {
-		if (input === null) {
-			input = "null";
-		} else if (typeof input === "string") {
-			input = '"' + input + '"';
+var stringifyJSON = function(input) {
+	var output;
+	if (input === null) {
+		output = "null";
+	} else if (typeof input === "string") {
+		output = '"' + input + '"';
+	} else if (Array.isArray(input)) {
+		output = "[";
+		for (var i = 0, l = input.length; i < l; i++) {
+			if (i > 0) {
+				output += ",";
+			}
+			output += stringifyJSON(input[i]);
 		}
-		stringInput = input.toString();
-		
+		output += "]";
+	} else if (typeof input === "object") {
+		output = "{";
+		var counter = 0;
+		for (var property in input) {
+			if (counter) {
+				output += ",";
+			}
+			if (property === "undefined" || property === "functions") {
+				break;
+			}
+			output += stringifyJSON(property) + ":" + stringifyJSON(input[property]);
+			counter++;
+		}
+		output += "}";
 	} else {
-		stringInput = "[" + input.toString() + "]";
+		output = input.toString();
 	}
-	arrayInput = stringInput.split("");
-	
-	console.log("Input: " + arrayInput);
-	console.log(Array.isArray(arrayInput));
-	var arrayOutput = arr || [];
-	console.log(arrayOutput);
-	
-	for (var i = 0, l = arrayInput.length; i < l; i++) {
-		arrayOutput.push(arrayInput.shift());
-		console.log(typeof arrayOutput);
-	}
-	
-	/*
+	return output;
 
-	if(arrayInput.length > 0) {
-		console.log("Input length: " + arrayInput.length);
-		console.log("Input for recursion: " + arrayInput);
-		stringifyJSON(arrayInput,arrayOutput);
-	}
-	*/
-
-		console.log("break");
-		var finalOutput = arrayOutput.join("");
-		console.log("Final: " + finalOutput);
-		return finalOutput;		
 };
